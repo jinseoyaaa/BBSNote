@@ -1,0 +1,86 @@
+{% extends "base.html"  %}
+{% block content  %}
+<div class="container my-3">
+    {% if messages %}
+    <div class="alert alert-danger my-3" role="alert">
+        {% for message in messages %}
+        <strong>{{ message.tags }}</strong>
+        <ul>
+            <li>{{ message.message }}</li>
+        </ul>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <h2 class="border-bottom py-2">{{ board.subject }}</h2>
+    <div class="col-11"> <!-- 본문 -->
+        <div class="card">
+            <div class="card-body">
+                <div class="card-text">{{ board.content|linebreaksbr }}</div>
+                <div class="d-flex justify-content-end">
+                    {% if board.update_date %}
+                    <div class="badge badge-light p-2 text-left mx-3">
+                        <div class="mb-2">modified at</div>
+                        <div>{{ board.update_date|date:'Y-m-d A h:i'}}</div>
+                    </div>
+                    {% endif %}
+                    <div class="badge badge-light p-2 text-left">
+                        <div class="mb-2">{{ board.author.username }}</div>
+                        <div>{{ board.create_date|date:'Y-m-d A h:i' }}</div>
+                    </div>
+                </div>
+                {% if request.user == board.author %}
+                <div class="my-3">
+                    <a href="{% url 'bbsnote:board_modify' board.id %}" class="btn btn-sm btn-outline-secondary">수정</a>
+                    <a href="#" class="delete btn btn-sm btn-outline-secondary" data-uri="{% url 'bbsnote:board_delete' board.id  %}">삭제</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <h6 class="border-bottom my-3 py-2">{{board.comment_set.count}}개의 댓글이 있습니다.</h6>
+    {% if board.comment_set.count > 0 %}
+    <div class="mt-3">
+        {% for comment in board.comment_set.all %}
+        <div class="comment py-2 text-muted">
+            <span style="white-space: pre-line;">{{ comment.content|linebreaksbr }}</span>
+            {% if request.user == comment.author %}
+            <a href="{% url 'bbsnote:comment_modify' comment.id %}" class="small">수정</a>
+            <a href="#" class="small delete" data-uri="{% url 'bbsnote:comment_delete' comment.id %}">삭제</a>
+            {% endif %}
+            <div class="d-flex justify-content-end">
+                {% if comment.update_date %}
+                <div class="badge badge-light p-2 text-left">
+                    <div class="mb-2">modified at</div>
+                    <div>{{ comment.update_date|date:'Y-m-d A h:i' }}</div>
+                </div>
+                {% endif %}
+                <div class="badge badge-light p-2 text-left">
+                    <div class="mb-2">{{ comment.author.username }}</div>
+                    <div>{{ comment.create_date|date:'Y-m-d A h:i' }}</div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <form action="{% url 'bbsnote:comment_create' board.id %}" method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <textarea name="content" id="content" class="form-control" rows="3"
+            {% if not user.is_authenticated %}disabled{% endif %}></textarea>
+        </div>
+        <input type="submit" value="댓글달기" class="btn btn-primary">
+    </form>
+</div>
+{% endblock %}
+{% block script %}
+<script type="text/javascript">
+    $(document).ready(function(){
+        $(".delete").on('click', function(){
+            if(confirm("정말로 삭제하시겠습니까?")){
+                location.href = $(this).data('uri');
+            }
+        });
+    });
+</script>
+{% endblock %}
