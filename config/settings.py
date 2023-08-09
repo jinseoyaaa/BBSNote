@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "bbsnote.apps.BbsnoteConfig",
     "common.apps.CommonConfig",
+    "insta.apps.InstaConfig",
 ]
 
 MIDDLEWARE = [
@@ -118,6 +119,7 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = "/static/"
+STATIC_DIR = BASE_DIR / 'static'
 STATICFILES_DIRS = [
     BASE_DIR / 'static'
 ]

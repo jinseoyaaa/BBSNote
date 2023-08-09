@@ -24,14 +24,15 @@ from bbsnote import views
 
 # URL 패턴 목록 정의
 urlpatterns = [
-    # 첫번째 URL 패턴, 이 패턴은 'admin/' 문자열과 일치
+    # 이 패턴은 'admin/' 문자열과 일치
     # 일치할 경우 Django의 관리자 인터페이스 호출
     path("admin/", admin.site.urls),
-    # 두번째, URL 패턴, 이 패턴은 'bbsnote/' 문자열과 일치
+    # 이 패턴은 'bbsnote/' 문자열과 일치
     # 일치할 경우 'bbsnote.urls' 모듈에 정의된 URL 패턴 목록이 포함
     path("bbsnote/", include("bbsnote.urls")),
     path("common/", include("common.urls")),
-    # 세번째 URL 패턴, 이 패턴은 빈 문자열과 일치
+    # 이 패턴은 빈 문자열과 일치
     # 일치할 경우 views.index 뷰 함수 호출
     path("", views.index, name='index'),
+    path("insta/", include('insta.urls')),
 ]
